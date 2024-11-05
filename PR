@@ -1,0 +1,30 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+
+# Load the custom dataset from CSV
+data = pd.read_csv('data.csv')  # Replace 'data.csv' with your file path
+X = data.iloc[:, 0].values.reshape(-1, 1)  # First column as input (feature)
+Y = data.iloc[:, 1].values  # Second column as output (target)
+
+# Transform the data to include polynomial features
+degree = 2  # Degree of the polynomial (change as needed)
+poly_features = PolynomialFeatures(degree=degree)
+X_poly = poly_features.fit_transform(X)
+
+# Create and train the polynomial regression model
+model = LinearRegression()
+model.fit(X_poly, Y)
+
+# Make predictions
+Y_pred = model.predict(X_poly)
+
+# Plotting the results
+plt.scatter(X, Y, color='blue', label='Data Points')
+plt.plot(X, Y_pred, color='red', label=f'Polynomial Fit (Degree {degree})')
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.legend()
+plt.show()

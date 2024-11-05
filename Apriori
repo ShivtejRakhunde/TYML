@@ -1,0 +1,30 @@
+#pip install apyori
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from apyori import apriori
+
+df = pd.read_csv("/content/groceries - groceries.csv")
+
+df.head()
+
+df.shape
+
+records = []
+for i in range(0, 9835):
+    records.append([str(df.values[i,j]) for j in range(0, 33)])
+
+association_rules = apriori(records, min_support=0.0050, min_confidence=0.5, min_lift=3, min_length=2)
+association_results = list(association_rules)
+
+print(len(association_results))
+
+for i in association_results:
+    pair = i[0]
+    items = [x for x in pair]
+    print("Rule: " + items[0] + " -> " + items[1])
+    print("Support: " + str(i[1]))
+    print("Confidence: " + str(i[2][0][2]))
+    print("Lift: " + str(i[2][0][3]))
+    print("..........................................")

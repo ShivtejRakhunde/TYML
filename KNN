@@ -1,0 +1,63 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from collections import Counter
+
+# Load the dataset from a CSV file
+data = pd.read_csv('data.csv')  # Replace 'data.csv' with your file path
+
+# Separate features and labels
+X_train = data.iloc[:, :-1].values  # All rows, all columns except the last (features)
+y_train = data.iloc[:, -1].values    # All rows, last column (labels)
+
+# Euclidean distance function
+def euclidean_distance(point1, point2):
+    return np.sqrt(np.sum((point1 - point2) ** 2))
+
+# KNN function
+def knn_predict(X_train, y_train, X_test, k=3):
+    predictions = []
+    for test_point in X_test:
+        # Calculate the distance from the test point to all training points
+        distances = [euclidean_distance(test_point, x_train) for x_train in X_train]
+        
+        # Get indices of k-nearest neighbors
+        k_indices = np.argsort(distances)[:k]
+        
+        # Retrieve the labels of the k-nearest neighbors
+        k_nearest_labels = [y_train[i] for i in k_indices]
+        
+        # Determine the most common label (majority vote)
+        most_common = Counter(k_nearest_labels).most_common(1)
+        predictions.append(most_common[0][0])
+    
+    return predictions
+
+# Test data
+X_test = np.array([[4, 4], [5, 7]])  # New points to classify
+
+# Predict labels for test data
+k = 3
+predictions = knn_predict(X_train, y_train, X_test, k)
+print("Predicted labels:", predictions)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+
+# Scatter plot of training data
+for label in np.unique(y_train):
+    plt.scatter(X_train[y_train == label][:, 0], X_train[y_train == label][:, 1], label=f'Training Class {label}', s=100)
+
+# Scatter plot of test data
+plt.scatter(X_test[:, 0], X_test[:, 1], color='red', marker='x', s=200, label='Test Points')
+
+# Annotate predicted labels
+for i, txt in enumerate(predictions):
+    plt.annotate(f'Predicted: {txt}', (X_test[i, 0], X_test[i, 1]), textcoords="offset points", xytext=(0,10), ha='center')
+
+plt.title('K-Nearest Neighbors Classification')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.legend()
+plt.grid()
+plt.show()

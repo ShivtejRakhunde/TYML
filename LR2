@@ -1,0 +1,28 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# Load the custom dataset from CSV
+data = pd.read_csv('data.csv')  # Replace 'data.csv' with your file path
+X = data.iloc[:, 0].values.reshape(-1, 1)  # First column as input (feature)
+Y = data.iloc[:, 1].values  # Second column as output (target)
+
+# Create and train the model
+model = LinearRegression()
+model.fit(X, Y)
+
+# Get the slope (m) and intercept (b)
+m = model.coef_[0]
+b = model.intercept_
+print(f"Slope (m): {m}, Intercept (b): {b}")
+
+# Make predictions
+Y_pred = model.predict(X)
+
+# Plotting the results
+plt.scatter(X, Y, color='blue', label='Data Points')
+plt.plot(X, Y_pred, color='red', label='Best Fit Line')
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.legend()
+plt.show()
